@@ -220,18 +220,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         basic_dlgBuilder = dialogBuilder.show();
     }
 
-    @Override
-    public void AddNode(ArrayList<String> data, int i) {
-        treeModel = new TreeModel<>(rootClass);
-
-        NodeModel<Codes> funNode = new NodeModel<>(new Codes(1, i, data.get(i), new StringBuilder("public static void getYourName() { \n\n }")));
-        treeModel.addNode(rootClass, funNode);
-
-        adapter.setTreeModel(treeModel);
-
-        basic_dlgBuilder.dismiss();
-    }
-
     public void initNODE() {
         adapter = new CodeAdapter(requireActivity().getSupportFragmentManager(), getActivity(), this, treeView.getEditor());
 
@@ -286,142 +274,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         //return new DashLine(Color.parseColor("#F1286C"),3);
         //return new AngledLine();
     }
-
-    @Override
-    public void NodeOnClick(int id) {
-//        if (id == 0) {
-//            StringBuilder data = builder.ObjectGenerator(new ObjManager(new StringBuilder("MyClass"), Types.ObjTypes.Class));
-//
-//            NodeModel<Codes> classSample2 = new NodeModel<>(new Codes(1, new LogicBuilder(data.toString()).getClasses().get(0), data, Types.ObjTypes.Class.name()));
-//
-//            treeModel.addNode(rootClass, classSample2);
-//            adapter.setTreeModel(treeModel);
-//
-//        } else {
-//            if (id == 1) {
-//                StringBuilder data = builder.ObjectGenerator(new DataTypesManager(
-//                        new StringBuilder("newString"),
-//                        Types.VisibilityTypes.Public,
-//                        Types.DataTypes.String));
-//
-//                ShowMessage(getContext(), data);
-//
-//                NodeModel<Codes> classSample2 = new NodeModel<>(new Codes(1, new LogicBuilder(data.toString()).getVariables().get(0), data));
-//
-//                treeModel.addNode(rootClass, classSample2);
-//                adapter.setTreeModel(treeModel);
-//            }
-//        }
-    }
-
-
-    public void CodeToNode(String code) {
-
-        //Setting Up The Raw Code
-        BaseNode nodeBuilder;
-        LogicBuilder classBuilder = new LogicBuilder(code);
-
-        //Setting Up Classes
-        if (classBuilder.getClasses().size() != 0) {
-
-            nodeBuilder = new ClassNode(code);
-
-            rootClass = new NodeModel<>(new Codes(0, 0, new LogicBuilder(code).getClasses().get(0), new StringBuilder(code)));
-            treeModel = new TreeModel<>(rootClass);
-
-            for (int i = 0; i < nodeBuilder.size(); i++) {
-                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
-            }
-
-            treeModel = new TreeModel<>(rootClass);
-        }
-
-        //Setting Up Constructors
-        if (classBuilder.getConstructors().size() != 0) {
-            nodeBuilder = new ConstructorNode(code);
-            for (int i = 0; i < classBuilder.getConstructors().size(); i++) {
-                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
-            }
-        }
-
-        //Setting Up Functions
-        if (classBuilder.getMethods().size() != 0) {
-            nodeBuilder = new MethodNode(code);
-            for (int i = 0; i < classBuilder.getMethods().size(); i++) {
-                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
-            }
-        }
-
-        //Setting Up Variables
-        if (classBuilder.getVariables().size() != 0) {
-
-            nodeBuilder = new VariableNode(code);
-
-            for (int i = 0; i < classBuilder.getVariables().size(); i++) {
-                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
-            }
-        }
-
-        rootClass.removeChildNode(rootClass.getChildNodes().get(0));
-
-        //Setting The Node Data
-        parentToRemoveChildren = rootClass;
-        targetNode = rootClass.getChildNodes().get(0);
-
-        //Allotting Data
-        adapter.setTreeModel(treeModel);
-    }
-
-    public String NodeToCode() {
-        return rootClass.value.data.toString();
-    }
-
-    @Override
-    public void onScaling(int state, int percent) {
-    }
-
-    @Override
-    public void onDragMoveNodesHit(@Nullable NodeModel<?> draggingNode, @Nullable NodeModel<?> hittingNode, @Nullable View draggingView, @Nullable View hittingView) {
-    }
-
-    @Override
-    public void onDropNode(View view) {
-        NodeModel<Codes> targetHolderNode = null, releasedChildHolderNode = null;
-
-        Object fTag = view.getTag(com.gyso.treeview.R.id.the_hit_target);
-        boolean getHit = fTag != null;
-
-        TreeViewHolder<Codes> targetHolder = (TreeViewHolder<Codes>) treeView.treeViewContainer.getTreeViewHolder((NodeModel) fTag);
-        TreeViewHolder<Codes> releasedChildHolder = (TreeViewHolder<Codes>) view.getTag(com.gyso.treeview.R.id.item_holder);
-
-
-        if (targetHolder != null) {
-            targetHolderNode = targetHolder.getNode();
-        }
-
-        if (targetHolder != null) {
-            releasedChildHolderNode = releasedChildHolder.getNode();
-        }
-
-        if (getHit) {
-            View child = targetHolder.getView();
-
-            for (int i = 0; i < ((ViewGroup) child).getChildCount(); i++) {
-                View childView = ((ViewGroup) child).getChildAt(i);
-                if (childView instanceof MaterialTextView) {
-                    int typeInfoDataText = Integer.parseInt(((TextView) childView).getText().toString());
-
-                    if (typeInfoDataText == 2)
-                        //Node Is Not Merge
-                        ShowMessage(getContext(), new StringBuilder(releasedChildHolderNode.value.label));
-                    else
-                        //Node Is Merge
-                        NodeMerge(targetHolderNode, releasedChildHolderNode);
-                }
-            }
-        }
-    }
-
     public void NodeMerge(NodeModel<Codes> target, NodeModel<Codes> released) {
 
         LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
@@ -483,7 +335,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
     }
 
-
     public void AddVariableNode(NodeModel<Codes> target, NodeModel<Codes> released) {
         LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
         LogicBuilder releasedLogic = new LogicBuilder(released.value.data.toString());
@@ -500,7 +351,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
 
     }
-
 
     public static String AddCode(String codeString, String code) {
 
@@ -536,7 +386,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         return codeString;
     }
 
-
     public String replace(String input, String codeToReplace, String replacement) {
         if (input == null || codeToReplace == null || replacement == null) {
             throw new IllegalArgumentException("Input, target, and replacement cannot be null");
@@ -559,4 +408,149 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
         return result;
     }
+
+    public void CodeToNode(String code) {
+
+        //Setting Up The Raw Code
+        BaseNode nodeBuilder;
+        LogicBuilder classBuilder = new LogicBuilder(code);
+
+        //Setting Up Classes
+        if (classBuilder.getClasses().size() != 0) {
+
+            nodeBuilder = new ClassNode(code);
+
+            rootClass = new NodeModel<>(new Codes(0, 0, new LogicBuilder(code).getClasses().get(0), new StringBuilder(code)));
+            treeModel = new TreeModel<>(rootClass);
+
+            for (int i = 0; i < nodeBuilder.size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+
+            treeModel = new TreeModel<>(rootClass);
+        }
+
+        //Setting Up Constructors
+        if (classBuilder.getConstructors().size() != 0) {
+            nodeBuilder = new ConstructorNode(code);
+            for (int i = 0; i < classBuilder.getConstructors().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+        }
+
+        //Setting Up Functions
+        if (classBuilder.getMethods().size() != 0) {
+            nodeBuilder = new MethodNode(code);
+            for (int i = 0; i < classBuilder.getMethods().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+        }
+
+        //Setting Up Variables
+        if (classBuilder.getVariables().size() != 0) {
+            nodeBuilder = new VariableNode(code);
+            for (int i = 0; i < classBuilder.getVariables().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+        }
+
+        rootClass.removeChildNode(rootClass.getChildNodes().get(0));
+
+        //Setting The Node Data
+        parentToRemoveChildren = rootClass;
+        targetNode = rootClass.getChildNodes().get(0);
+
+        //Allotting Data
+        adapter.setTreeModel(treeModel);
+    }
+
+    public String NodeToCode() {
+        return rootClass.value.data.toString();
+    }
+
+    @Override
+    public void NodeOnClick(int id) {
+//        if (id == 0) {
+//            StringBuilder data = builder.ObjectGenerator(new ObjManager(new StringBuilder("MyClass"), Types.ObjTypes.Class));
+//
+//            NodeModel<Codes> classSample2 = new NodeModel<>(new Codes(1, new LogicBuilder(data.toString()).getClasses().get(0), data, Types.ObjTypes.Class.name()));
+//
+//            treeModel.addNode(rootClass, classSample2);
+//            adapter.setTreeModel(treeModel);
+//
+//        } else {
+//            if (id == 1) {
+//                StringBuilder data = builder.ObjectGenerator(new DataTypesManager(
+//                        new StringBuilder("newString"),
+//                        Types.VisibilityTypes.Public,
+//                        Types.DataTypes.String));
+//
+//                ShowMessage(getContext(), data);
+//
+//                NodeModel<Codes> classSample2 = new NodeModel<>(new Codes(1, new LogicBuilder(data.toString()).getVariables().get(0), data));
+//
+//                treeModel.addNode(rootClass, classSample2);
+//                adapter.setTreeModel(treeModel);
+//            }
+//        }
+    }
+
+    @Override
+    public void onScaling(int state, int percent) {
+    }
+
+    @Override
+    public void onDragMoveNodesHit(@Nullable NodeModel<?> dn, @Nullable NodeModel<?> hn, @Nullable View dv, @Nullable View hv) {
+    }
+
+    @Override
+    public void onDropNode(View view) {
+        NodeModel<Codes> targetHolderNode = null, releasedChildHolderNode = null;
+
+        Object fTag = view.getTag(com.gyso.treeview.R.id.the_hit_target);
+        boolean getHit = fTag != null;
+
+        TreeViewHolder<Codes> targetHolder = (TreeViewHolder<Codes>) treeView.treeViewContainer.getTreeViewHolder((NodeModel) fTag);
+        TreeViewHolder<Codes> releasedChildHolder = (TreeViewHolder<Codes>) view.getTag(com.gyso.treeview.R.id.item_holder);
+
+
+        if (targetHolder != null) {
+            targetHolderNode = targetHolder.getNode();
+        }
+
+        if (targetHolder != null) {
+            releasedChildHolderNode = releasedChildHolder.getNode();
+        }
+
+        if (getHit) {
+            View child = targetHolder.getView();
+
+            for (int i = 0; i < ((ViewGroup) child).getChildCount(); i++) {
+                View childView = ((ViewGroup) child).getChildAt(i);
+                if (childView instanceof MaterialTextView) {
+                    int typeInfoDataText = Integer.parseInt(((TextView) childView).getText().toString());
+
+                    if (typeInfoDataText == 2)
+                        //Node Is Not Merge
+                        ShowMessage(getContext(), new StringBuilder(releasedChildHolderNode.value.label));
+                    else
+                        //Node Is Merge
+                        NodeMerge(targetHolderNode, releasedChildHolderNode);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void AddNode(ArrayList<String> data, int i) {
+        treeModel = new TreeModel<>(rootClass);
+
+        NodeModel<Codes> funNode = new NodeModel<>(new Codes(1, i, data.get(i), new StringBuilder("public static void getYourName() { \n\n }")));
+        treeModel.addNode(rootClass, funNode);
+
+        adapter.setTreeModel(treeModel);
+
+        basic_dlgBuilder.dismiss();
+    }
+
 }
