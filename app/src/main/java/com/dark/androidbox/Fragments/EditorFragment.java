@@ -5,9 +5,11 @@ import static com.dark.androidbox.Utilities.DarkUtilities.ShowMessage;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,9 +22,15 @@ import com.dark.androidbox.Adpaters.CodeAdapter;
 import com.dark.androidbox.Adpaters.NodeListAdapter;
 import com.dark.androidbox.Editor.Codes;
 import com.dark.androidbox.Editor.Editor;
+import com.dark.androidbox.Managers.NodeBuilderDialog;
 import com.dark.androidbox.R;
 import com.dark.androidbox.System.NodeEvents;
 import com.dark.androidbox.builder.LogicBuilder;
+import com.dark.androidbox.builder.NodeType.BaseNode;
+import com.dark.androidbox.builder.NodeType.ClassNode;
+import com.dark.androidbox.builder.NodeType.ConstructorNode;
+import com.dark.androidbox.builder.NodeType.MethodNode;
+import com.dark.androidbox.builder.NodeType.VariableNode;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -39,12 +47,16 @@ import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditorFragment extends Fragment implements NodeEvents, TreeViewControlListener {
 
     public GysoTreeView treeView;
     public TreeViewEditor editor;
     public MaterialButton code, node, focusMid, add;
+
+    public ImageView backBtn;
 
     public CodeView txtCode;
     public MaterialSwitch dragLock;
@@ -60,6 +72,8 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
     NodeModel<Codes> rootClass;
     private NodeModel<Codes> parentToRemoveChildren = null;
     private NodeModel<Codes> targetNode;
+
+    NodeBuilderDialog nodeBuilderDialog;
 
     public EditorFragment() {
     }
@@ -85,7 +99,15 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
                 "        extractVariables();\n" +
                 "    }\n" +
                 "    public ArrayList<String> getVariables() {\n" +
-                "        return variables;\n" +
+                "        String var;\n\n " +
+                "        return var;\n" +
+                "    }\n" +
+                "    public class SonarBuilder { \n" +
+                "\n" +
+                "    }\n" +
+                "" +
+                "    public class Class2 {\n" +
+                "\n" +
                 "    }\n" +
                 "}";
     }
@@ -111,6 +133,8 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
         dragLock = root.findViewById(R.id.drag);
 
+        backBtn = root.findViewById(R.id.back_btn);
+
         initNODE();
         Logic();
 
@@ -121,30 +145,43 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
     public void Logic() {
 
+        //Setting Up Node Builder ( A Section From Were u can add New Nodes )
+        nodeBuilderDialog = new NodeBuilderDialog(getContext(), treeView);
+
+        //Setting Up Text Editor
         codeEditor = new Editor(getContext(), txtCode);
         codeEditor.setUp();
         codeEditor.setDynamicString(new StringBuilder(rootClass.value.label), "#9e9d4c");
 
+        //Setting Up View Logic
         txtCode.setVisibility(View.GONE);
         treeView.setVisibility(View.VISIBLE);
 
+        //On Code Button Click > Node View Should be Invisible
         code.setOnClickListener(v -> {
             txtCode.setText(NodeToCode());
             txtCode.setVisibility(View.VISIBLE);
             treeView.setVisibility(View.GONE);
         });
 
+        //On Node Button Click > Code Editor View Should be Invisible
         node.setOnClickListener(view -> {
             CodeToNode(txtCode.getText().toString());
             txtCode.setVisibility(View.GONE);
             treeView.setVisibility(View.VISIBLE);
         });
 
+        //On FocusMid Button Click > Focus In The Middle OF The Node View
         focusMid.setOnClickListener(view -> {
             editor.focusMidLocation();
         });
 
-        add.setOnClickListener(view -> NodeList());
+        //On Add Button Click > Node Builder Will be Visible
+        add.setOnClickListener(view -> nodeBuilderDialog.castNodeBuilder(30));
+
+        backBtn.setOnClickListener(view -> {
+
+        });
 
     }
 
@@ -277,42 +314,55 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 //        }
     }
 
+
     public void CodeToNode(String code) {
 
         //Setting Up The Raw Code
+        BaseNode nodeBuilder;
         LogicBuilder classBuilder = new LogicBuilder(code);
 
+        //Setting Up Classes
         if (classBuilder.getClasses().size() != 0) {
+
+            nodeBuilder = new ClassNode(code);
+
             rootClass = new NodeModel<>(new Codes(0, 0, new LogicBuilder(code).getClasses().get(0), new StringBuilder(code)));
             treeModel = new TreeModel<>(rootClass);
-        } else {
-            ShowMessage(getContext(), new StringBuilder("No Class Found"));
+
+            for (int i = 0; i < nodeBuilder.size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+
+            treeModel = new TreeModel<>(rootClass);
         }
 
+        //Setting Up Constructors
+        if (classBuilder.getConstructors().size() != 0) {
+            nodeBuilder = new ConstructorNode(code);
+            for (int i = 0; i < classBuilder.getConstructors().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
+            }
+        }
 
         //Setting Up Functions
-        if (classBuilder.getFunctions().size() != 0) {
-
-            for (int i = 0; i < classBuilder.getFunctions().size(); i++) {
-                NodeModel<Codes> funNode = new NodeModel<>(new Codes(1, i + 1, classBuilder.getFunctions().get(i), new StringBuilder(classBuilder.getFunctionInfo(classBuilder.getFunctions().get(i)))));
-
-                treeModel.addNode(rootClass, funNode);
+        if (classBuilder.getMethods().size() != 0) {
+            nodeBuilder = new MethodNode(code);
+            for (int i = 0; i < classBuilder.getMethods().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
             }
-        } else {
-            ShowMessage(getContext(), new StringBuilder("No Function Found"));
         }
 
         //Setting Up Variables
         if (classBuilder.getVariables().size() != 0) {
 
-            for (int i = 0; i < classBuilder.getVariables().size(); i++) {
-                NodeModel<Codes> varNode = new NodeModel<>(new Codes(2, i + 1, builder.getVariables().get(i), new StringBuilder(builder.getVariablesCode().get(i))));
+            nodeBuilder = new VariableNode(code);
 
-                treeModel.addNode(rootClass, varNode);
+            for (int i = 0; i < classBuilder.getVariables().size(); i++) {
+                treeModel.addNode(rootClass, nodeBuilder.buildNode(i));
             }
-        } else {
-            ShowMessage(getContext(), new StringBuilder("No Variable Found"));
         }
+
+        rootClass.removeChildNode(rootClass.getChildNodes().get(0));
 
         //Setting The Node Data
         parentToRemoveChildren = rootClass;
@@ -328,27 +378,30 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
     @Override
     public void onScaling(int state, int percent) {
-
     }
 
     @Override
     public void onDragMoveNodesHit(@Nullable NodeModel<?> draggingNode, @Nullable NodeModel<?> hittingNode, @Nullable View draggingView, @Nullable View hittingView) {
-        NodeModel<Codes> da = (NodeModel<Codes>) draggingNode;
-        ShowMessage(getContext(), new StringBuilder(da.value.label));
     }
 
     @Override
     public void onDropNode(View view) {
+        NodeModel<Codes> targetHolderNode = null, releasedChildHolderNode = null;
 
         Object fTag = view.getTag(com.gyso.treeview.R.id.the_hit_target);
         boolean getHit = fTag != null;
 
         TreeViewHolder<Codes> targetHolder = (TreeViewHolder<Codes>) treeView.treeViewContainer.getTreeViewHolder((NodeModel) fTag);
-        NodeModel<Codes> targetHolderNode = targetHolder.getNode();
-
         TreeViewHolder<Codes> releasedChildHolder = (TreeViewHolder<Codes>) view.getTag(com.gyso.treeview.R.id.item_holder);
-        NodeModel<Codes> releasedChildHolderNode = releasedChildHolder.getNode();
 
+
+        if (targetHolder != null) {
+            targetHolderNode = targetHolder.getNode();
+        }
+
+        if (targetHolder != null) {
+            releasedChildHolderNode = releasedChildHolder.getNode();
+        }
 
         if (getHit) {
             View child = targetHolder.getView();
@@ -364,7 +417,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
                     else
                         //Node Is Merge
                         NodeMerge(targetHolderNode, releasedChildHolderNode);
-
                 }
             }
         }
@@ -375,24 +427,136 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
         LogicBuilder releasedLogic = new LogicBuilder(released.value.data.toString());
         LogicBuilder classBuilder = new LogicBuilder(rootClass.value.data.toString());
-        
+
         StringBuilder targetData = target.value.data;
         StringBuilder releasedData = released.value.data;
 
         int targetNodeType = target.value.type;
         int releasedNodeType = released.value.type;
 
-        if (targetNodeType != 2 && targetNodeType != 3){
-            if (targetNodeType == 0 && releasedNodeType == 1){
-                if (!classBuilder.getFunctions().contains(releasedLogic.getFunctions().get(0))){
+        if (targetNodeType == 0 && releasedNodeType == 2)
+            AddVariableNode(target, released);
 
-                    String cacheClass = target.value.data.toString();
-                    cacheClass = cacheClass.substring(0, cacheClass.length() - 1);
+//        if (releasedLogic.isClass()) {
+//
+//            String classToWrite = releasedLogic.getClasses().get(0);
+//
+//            if (targetLogic.containsClass(classToWrite)) {
+//                String codeToReplace = targetLogic.extractClass(classToWrite);
+//
+//                target.value.writeData(new StringBuilder(replace(targetData.toString(), codeToReplace, releasedData.toString())));
+//
+//                Log.e("Mission SuccessFull", target.value.data.toString());
+//
+//            } else {
+//
+//                target.value.writeData(new StringBuilder(writeClass(targetData.toString(), releasedData.toString())));
+//
+//                classToWrite = targetLogic.getClasses().get(0);
+//                Log.e("CLass To Write", classToWrite);
+//                Log.e("CLass Data", rootClass.value.data.toString());
+//
+//                if (classBuilder.containsClass(classToWrite)){
+//                    String strToReplace = classBuilder.extractClass(classToWrite);
+//                    String withReplace = target.value.data.toString();
+//
+//                    classToWrite = targetLogic.getClasses().get(0);
+//
+//                    Log.e("CLass To Write With", withReplace);
+//
+//                    if (classBuilder.containsClass(classToWrite)){
+//                        String existingCode = rootClass.value.data.toString();
+//
+//                        String modifiedClassCode = target.value.data.toString();
+//
+//                        // Step 3: Find the specific class block within the string
+//                        String regex = "(?s)(class\\s+" + classToWrite + "\\s*\\{.*?\\})";
+//                        String modifiedCode = existingCode.replaceAll(regex, modifiedClassCode);
+//
+//                        rootClass.value.writeData(new StringBuilder(modifiedCode));
+//                    }
+//                }
+//
+//                Log.e("Mission SuccessFull", target.value.data.toString());
+//            }
+//        }
 
-                    target.value.writeData(new StringBuilder(cacheClass + "\n" + released.value.data + "\n}"));
+    }
+
+
+    public void AddVariableNode(NodeModel<Codes> target, NodeModel<Codes> released) {
+        LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
+        LogicBuilder releasedLogic = new LogicBuilder(released.value.data.toString());
+        LogicBuilder classBuilder = new LogicBuilder(rootClass.value.data.toString());
+
+
+        int targetNodeType = target.value.type;
+        int releasedNodeType = released.value.type;
+
+
+        if (targetLogic.isClass()) {
+            AddCode(target.value.data.toString(), released.value.data.toString());
+        }
+
+
+    }
+
+
+    public static String AddCode(String codeString, String code) {
+
+        // Regular expression pattern to match the class declaration line
+        String classDeclarationPattern = "\\bpublic\\s+class\\s+\\w+\\b";
+
+        // Create a regular expression pattern object
+        Pattern pattern = Pattern.compile(classDeclarationPattern);
+        Matcher matcher = pattern.matcher(codeString);
+
+        // Find the class declaration line
+        if (matcher.find()) {
+            String classDeclarationLine = matcher.group();
+
+            // Find the index of the class declaration line
+            int classDeclarationIndex = codeString.indexOf(classDeclarationLine);
+
+            // Check if the class declaration line is found
+            if (classDeclarationIndex != -1) {
+                // Find the index of the closing curly brace
+                int closingBraceIndex = codeString.indexOf('}', classDeclarationIndex);
+
+                // Check if the closing brace is found
+                if (closingBraceIndex != -1) {
+                    // Insert the text after the closing brace
+
+                    return codeString.substring(0, closingBraceIndex) +
+                            "\n" + code + "\n" +
+                            codeString.substring(closingBraceIndex);
                 }
             }
         }
+        return codeString;
+    }
 
+
+    public String replace(String input, String codeToReplace, String replacement) {
+        if (input == null || codeToReplace == null || replacement == null) {
+            throw new IllegalArgumentException("Input, target, and replacement cannot be null");
+        }
+        return input.replace(codeToReplace, replacement);
+    }
+
+    public String writeClass(String targetData, String releasedData) {
+        String result = "";
+
+        String[] lines = targetData.split("\\r?\\n");
+        int secondLastLineIndex = lines.length - 2; // index of the second last line
+
+        if (secondLastLineIndex >= 0) {
+            lines[secondLastLineIndex] = releasedData.toString(); // new string to insert
+            result = String.join("\n", lines);
+        } else {
+            System.out.println("Error: Could not find second last line in the original string.");
+        }
+
+        return result;
     }
 }

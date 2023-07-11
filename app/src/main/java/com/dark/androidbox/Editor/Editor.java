@@ -13,10 +13,12 @@ import java.util.regex.PatternSyntaxException;
 public class Editor {
     public CodeView txtCode;
     EditorAdapter adapter;
-    Pattern defaultChar = Pattern.compile("(class|void|public|private|protected|static|final|new|return|int|short|long|float|double|boolean|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|throws|interface|extends|implements|package|import)");
-    Pattern objChar = Pattern.compile("(String|Array|ArrayList)");
-    Pattern symbolChar = Pattern.compile("(String|Array|ArrayList)");
+    Pattern classKeyword = Pattern.compile("\\bclass\\b");
+    Pattern defaultKeywords = Pattern.compile("\\b(void|public|private|protected|static|final|new|return|int|short|long|float|double|boolean|if|else|for|while|do|switch|case|break|continue|try|catch|finally|throw|throws|interface|extends|implements|package)\\b");
+    Pattern objChar = Pattern.compile("\\b(String|Array|ArrayList)\\b");
+    Pattern symbolChar = Pattern.compile("\\b(String|Array)\\b");
     Pattern variablePattern = Pattern.compile("(public|private|protected)?\\s*(static)?\\s*(\\w+)\\s+(\\w+)(\\s*=.*?)?;");
+    Pattern importPattern = Pattern.compile("\\b(import\\s+\\w+(\\.\\w+)*\\.?\\*?;?)\\b");
 
 
     public Editor(Context context, CodeView codeView) {
@@ -43,10 +45,12 @@ public class Editor {
 
 
         //Add Syntax highlighter
-        txtCode.addSyntaxPattern(defaultChar, Color.parseColor("#6b518f"));
+        txtCode.addSyntaxPattern(classKeyword, Color.parseColor("#6b518f"));
+        txtCode.addSyntaxPattern(defaultKeywords, Color.parseColor("#6b518f"));
         txtCode.addSyntaxPattern(objChar, Color.parseColor("#9e9d4c"));
-        txtCode.addSyntaxPattern(variablePattern, Color.parseColor("#634538"));
         txtCode.addSyntaxPattern(symbolChar, Color.parseColor("#51848f"));
+        txtCode.addSyntaxPattern(variablePattern, Color.parseColor("#634538"));
+        txtCode.addSyntaxPattern(importPattern, Color.parseColor("#ff0000"));
 
         //Add Suggestions an Auto Complete
         adapter.AddSnippet("getString", "public void String getString() { \n return null; \n}");

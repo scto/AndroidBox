@@ -10,12 +10,12 @@
         <item name="colorSecondaryVariant">@color/system3_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:navigationBarColor">
-            @android:color/transparent
+            @android:color/black
         </item>
 
         <!-- Optional: set to transparent if your app is drawing behind the status bar. -->
         <item name="android:statusBarColor">
-            @android:color/transparent
+            @android:color/black
         </item>
 
         <!-- Optional: set the status bar light and content dark. -->

@@ -36,10 +36,11 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
 
+
     implementation project(path: ':codeview')
 
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'com.github.javaparser:javaparser-core:3.25.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.github.javaparser:javaparser-core:3.25.3'
 
     implementation project(path: ':nodes')
 

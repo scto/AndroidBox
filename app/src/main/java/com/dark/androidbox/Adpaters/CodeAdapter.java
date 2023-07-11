@@ -32,7 +32,7 @@ import com.gyso.treeview.adapter.TreeViewHolder;
 import com.gyso.treeview.line.BaseLine;
 import com.gyso.treeview.model.NodeModel;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class CodeAdapter extends TreeViewAdapter<Codes> {
 
@@ -74,46 +74,41 @@ public class CodeAdapter extends TreeViewAdapter<Codes> {
 
         MaterialButton delNode = items.findViewById(R.id.delNode);
 
+        MaterialButton codeNode = items.findViewById(R.id.btn_code);
+
         NodeModel<Codes> nodeObj = holder.getNode();
 
         final Codes blockData = nodeObj.value;
 
         cardInfo.setVisibility(View.GONE);
 
-        items.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                events.NodeOnClick(blockData.itemId);
-            }
+        items.setOnClickListener(view -> events.NodeOnClick(blockData.itemId));
+
+        head_node.setOnLongClickListener(v -> {
+            cardInfo.setVisibility(!(cardInfo.getVisibility() == View.VISIBLE) ? View.VISIBLE : View.GONE);
+
+            return false;
         });
 
-        head_node.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                cardInfo.setVisibility(!(cardInfo.getVisibility() == View.VISIBLE) ? View.VISIBLE : View.GONE);
-                return false;
-            }
-        });
+        delNode.setOnClickListener(view -> editor.removeNode(holder.getNode()));
 
-        delNode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editor.removeNode(holder.getNode());
-            }
-        });
+        codeNode.setOnClickListener(view -> {
 
+        });
 
         label.setText(blockData.label);
+
         if (blockData.itemId == 0) {
-            String data = setUpClassInfo(new LogicBuilder(EditorFragment.sampleCode()));
+            String data = String.valueOf(setUpClassInfo(new LogicBuilder(EditorFragment.sampleCode())));
 
             SpannableStringBuilder colorant = new SpannableStringBuilder(data);
 
             SetUpColor(colorant, data, "Type", "#8EBBFF");
             SetUpColor(colorant, data, "Returns", "#8EBBFF");
-            SetUpColor(colorant, data, "Super Class", "#8EBBFF");
-            SetUpColor(colorant, data, "Implementations", "#8EBBFF");
+            SetUpColor(colorant, data, "Extends", "#8EBBFF");
+            SetUpColor(colorant, data, "Interface", "#8EBBFF");
             SetUpColor(colorant, data, "Null", "#FF8E8E");
+            SetUpColor(colorant, data, "Class", "#BBB0FF");
 
             txt_info.setText(colorant);
 
@@ -128,38 +123,32 @@ public class CodeAdapter extends TreeViewAdapter<Codes> {
                 }
             }
         }
+
         node_id.setText("" + blockData.type);
 
-        Log.d("System Info", String.valueOf(new LogicBuilder(EditorFragment.sampleCode()).objType));
+        Log.d("System Info", String.valueOf(new LogicBuilder(EditorFragment.sampleCode())));
     }
+    public StringBuilder setUpClassInfo(LogicBuilder builder) {
 
-    public String setUpClassInfo(LogicBuilder builder) {
+        StringBuilder Type, Returns, Inputs = new StringBuilder(""), data = new StringBuilder("");
 
-        String Type, Returns, Inputs = "null", data;
 
-        String superclass = builder.getClassExtends(builder.getClasses().get(0));
-        if (superclass != null) {
-            List<String> interfaces = builder.getClassImplements();
-            if (!interfaces.isEmpty()) {
-                StringBuilder sampleData;
-                sampleData = new StringBuilder();
-                for (int i = 0; i < interfaces.size(); i++) {
-                    sampleData.append(", ").append(interfaces.get(i));
-                }
-                Inputs = "Super Class : ".concat(superclass).concat("\n").concat("Implementations ").concat(sampleData.substring(1));
+        ArrayList<StringBuilder> Interfaces = builder.getClassImplementation();
+        StringBuilder Extends = builder.getClassExtends().get(0);
+
+        if (Extends.length() != 0) {
+            Inputs = new StringBuilder("Extends : ".concat(Extends.toString()));
+            if (Interfaces.size() != 0) {
+                Inputs.append("\nInterface : ".concat(String.join(", ", Interfaces)));
             }
-
-        } else {
-            System.out.println("MyClass does not extend any class");
         }
-        Type = "Type : Class";
-        Returns = "Returns : Null";
+        Type = new StringBuilder("Type : Class \n");
+        Returns = new StringBuilder("Returns : Null \n");
 
-        data = Type.concat("\n").concat(Returns).concat("\n").concat(Inputs);
+        data.append(Type).append(Returns).append(Inputs);
 
-        return String.valueOf(data);
+        return data;
     }
-
     @Override
     public BaseLine onDrawLine(DrawInfo drawInfo) {
         return null;
@@ -169,7 +158,9 @@ public class CodeAdapter extends TreeViewAdapter<Codes> {
         ForegroundColorSpan txtColor1 = new ForegroundColorSpan(Color.parseColor(color));
 
         int start1 = data.indexOf(word);
-        int end1 = start1 + word.length();
-        colorant.setSpan(txtColor1, start1, end1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (start1 != -1) {
+            int end1 = start1 + word.length();
+            colorant.setSpan(txtColor1, start1, end1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
     }
 }
