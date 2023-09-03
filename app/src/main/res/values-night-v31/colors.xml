@@ -11,5 +11,5 @@
     <color name="checked">@android:color/system_accent1_200</color>
     <color name="unchecked">#FF6969</color>
     <color name="color_logger">#000000</color>
-    <color name="background">#FFFFFF</color>
+    <color name="background">#000000</color>
 </resources>

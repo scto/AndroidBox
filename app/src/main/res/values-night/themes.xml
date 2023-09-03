@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.AndroidBox" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.AndroidBox" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/system1_200</item>
         <item name="colorPrimaryVariant">@color/system1_700</item>
@@ -15,7 +15,7 @@
 
         <!-- Optional: set to transparent if your app is drawing behind the status bar. -->
         <item name="android:statusBarColor">
-            @android:color/black
+            @color/background
         </item>
 
         <!-- Optional: set the status bar light and content dark. -->
