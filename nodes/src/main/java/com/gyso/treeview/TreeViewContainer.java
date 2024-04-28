@@ -60,7 +60,7 @@ public class TreeViewContainer extends ViewGroup implements TreeViewNotifier {
     public static final int DEFAULT_FOCUS_DURATION = 300;
     public static final float DEFAULT_REMOVE_ANIMATOR_DES = 100;
     private static final String TAG = TreeViewContainer.class.getSimpleName();
-    private static final boolean isDebug = BuildConfig.isDebug;
+    private static final boolean isDebug = false;
     private final DragBlock dragBlock;
     private final ViewDragHelper dragHelper;
     private final SparseArray<HolderPool> holderPools = new SparseArray<>();

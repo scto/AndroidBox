@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.dark.androidbox'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.dark.androidbox"
@@ -39,8 +39,8 @@ dependencies {
 
     implementation project(path: ':codeview')
 
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'com.github.javaparser:javaparser-core:3.25.3'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.github.javaparser:javaparser-core:3.25.10'
 
     implementation project(path: ':nodes')
 

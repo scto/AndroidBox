@@ -2,8 +2,6 @@ package com.gyso.treeview.util;
 
 import android.util.Log;
 
-import com.gyso.treeview.BuildConfig;
-
 /**
  * @Author: 怪兽N
  * @Time: 2021/5/8  15:10
@@ -12,7 +10,7 @@ import com.gyso.treeview.BuildConfig;
  * @Describe: logger
  */
 public class TreeViewLog {
-    private static boolean isDebug = BuildConfig.isDebug;
+    private static boolean isDebug = false;
 
     public static void d(String tag, String msg) {
         if (isDebug) {
