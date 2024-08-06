@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nodebuilder_layout_root"
     android:layout_width="250dp"
     android:layout_height="400dp"
-    android:orientation="vertical"
+    android:background="@drawable/bg_nodebuilder_pop"
     android:gravity="center_horizontal"
-    android:background="@drawable/bg_nodebuilder_pop">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/txt_drag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:fontFamily="@font/abel"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textColor="#FFFFFF"
         android:layout_marginBottom="25dp"
-        android:text="Add A New Node" />
-
+        android:fontFamily="@font/abel"
+        android:text="Add A New Node"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
 
     <RelativeLayout
@@ -68,6 +66,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="#FFFFFF"
-        android:padding="8dp"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="1dp"
+        android:padding="8dp" />
 </LinearLayout>

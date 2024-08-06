@@ -24,7 +24,7 @@ public class Codes {
         return itemId;
     }
 
-    public void writeData(StringBuilder data){
+    public void writeData(StringBuilder data) {
         this.data = data;
     }
 }

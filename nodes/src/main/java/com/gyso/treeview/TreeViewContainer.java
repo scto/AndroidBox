@@ -31,7 +31,6 @@ import com.gyso.treeview.adapter.TreeViewAdapter;
 import com.gyso.treeview.adapter.TreeViewHolder;
 import com.gyso.treeview.cache_pool.HolderPool;
 import com.gyso.treeview.cache_pool.PointPool;
-import com.gyso.treeview.events.NodeEventManager;
 import com.gyso.treeview.layout.TreeLayoutManager;
 import com.gyso.treeview.line.BaseLine;
 import com.gyso.treeview.listener.TreeViewControlListener;
@@ -528,7 +527,7 @@ public class TreeViewContainer extends ViewGroup implements TreeViewNotifier {
                     int typeInfoDataText = Integer.parseInt(((TextView) childView).getText().toString());
                     Log.d("Blocks Data >> ", "" + typeInfoDataText);
 
-                    if (isValidNode(typeInfoDataText)){
+                    if (isValidNode(typeInfoDataText)) {
                         double srcR = Math.hypot(view.getWidth(), view.getHeight());
                         TreeViewHolder<?> holder = getTreeViewHolder((NodeModel) fTag);
                         View targetView = holder.getView();
@@ -553,8 +552,7 @@ public class TreeViewContainer extends ViewGroup implements TreeViewNotifier {
 
                         drawInfo.getCanvas().drawRoundRect(left, top, right, bottom, rx, ry, mPaint);
                         PointPool.free(centerPoint);
-                    }
-                    else {
+                    } else {
                         drawDragBackGroundError(view);
                     }
                 }
@@ -564,7 +562,7 @@ public class TreeViewContainer extends ViewGroup implements TreeViewNotifier {
 
     public boolean isValidNode(int input) {
         boolean b = true;
-        if(!(input == 2 || input == 3))
+        if (!(input == 2 || input == 3))
             b = false;
         return b;
     }

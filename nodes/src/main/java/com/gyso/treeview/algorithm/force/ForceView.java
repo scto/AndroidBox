@@ -52,9 +52,11 @@ public class ForceView extends View implements ForceListener {
     private List<FNode> selectedNodes = new ArrayList<>();
     private ScaleGestureDetector scaleDetector;
     private int activePointerId = -1;
+
     public ForceView(Context context) {
         this(context, null);
     }
+
     public ForceView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

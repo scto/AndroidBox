@@ -76,25 +76,22 @@ public class SetUpScreenOne extends Fragment implements DialogEvents, SystemEven
 
         logger.R(SetUpScreenOne.loggerView,
                 new StringBuilder("Base Service"),
-                new StringBuilder("Test Log"));
+                new StringBuilder("Active Log"));
 
-        setup_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (setup_btn.getText().toString().equals("Next")) {
-                    Fragment fragment = new EditorFragment();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.base_frame, fragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                } else {
-                    dialogManager.BasicDialog(
-                            new StringBuilder("Proceed"),
-                            new StringBuilder("System Manager !"),
-                            new StringBuilder("Do you want to run The Actions ?"),
-                            true);
-                }
+        setup_btn.setOnClickListener(v -> {
+            if (setup_btn.getText().toString().equals("Next")) {
+                Fragment fragment = new EditorFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.base_frame, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            } else {
+                dialogManager.BasicDialog(
+                        new StringBuilder("Proceed"),
+                        new StringBuilder("System Manager !"),
+                        new StringBuilder("Do you want to run The Actions ?"),
+                        true);
             }
         });
 

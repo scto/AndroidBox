@@ -16,9 +16,8 @@ import java.util.ArrayList;
 
 public class NodeBuilderDialog {
 
-    private Context context;
-
     public ViewGroup hostView;
+    private Context context;
 
     public NodeBuilderDialog(Context context, ViewGroup hostView) {
         this.context = context;

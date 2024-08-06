@@ -19,11 +19,9 @@ Syntex Hilighter Like VS CODE
 
 ![Frame 48](https://user-images.githubusercontent.com/67579112/228865415-c6c67ebc-e862-4c76-9454-ffa3f5f23c05.svg)
 
+Services :
 
-
-Services : 
-
-  [ Dialog Manager ]
+[ Dialog Manager ]
 
     Local Path : <$Project Path/app/src/main/java/com/dark/androidbox/Managers/>
 
@@ -31,8 +29,7 @@ Services :
     
         Github Name > Siddhesh Sonar { Me :) }
 
-
-  [ Java Code Parser ]
+[ Java Code Parser ]
 
       Local Path : Available in Apps Build.gradle
 
@@ -40,11 +37,9 @@ Services :
       
           Github Name > https://github.com/javaparser/javaparser
 
+Custom View :
 
-
-Custom View : 
-
-  [ Node View ]
+[ Node View ]
 
     Local Path : AndroidBox/nodes
 
@@ -52,8 +47,7 @@ Custom View :
 
          Github > https://github.com/guaishouN/android-thinkmap-treeview
 
-
-  [ Code View ]
+[ Code View ]
 
     Local Path : AndroidBox/codeview
 

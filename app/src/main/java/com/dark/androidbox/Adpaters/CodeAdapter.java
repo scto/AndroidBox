@@ -128,6 +128,7 @@ public class CodeAdapter extends TreeViewAdapter<Codes> {
 
         Log.d("System Info", String.valueOf(new LogicBuilder(EditorFragment.sampleCode())));
     }
+
     public StringBuilder setUpClassInfo(LogicBuilder builder) {
 
         StringBuilder Type, Returns, Inputs = new StringBuilder(""), data = new StringBuilder("");
@@ -149,6 +150,7 @@ public class CodeAdapter extends TreeViewAdapter<Codes> {
 
         return data;
     }
+
     @Override
     public BaseLine onDrawLine(DrawInfo drawInfo) {
         return null;

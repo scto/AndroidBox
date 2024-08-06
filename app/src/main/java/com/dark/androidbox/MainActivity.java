@@ -2,8 +2,6 @@ package com.dark.androidbox;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +14,7 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     FrameLayout base_frame;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -14,7 +14,7 @@ public class BaseNode {
         nodeBuilder = new LogicBuilder(code);
     }
 
-    public NodeModel<Codes> buildNode(int i){
+    public NodeModel<Codes> buildNode(int i) {
         return baseNode = new NodeModel<>(new Codes(0, 0, "Base Node", null));
     }
 

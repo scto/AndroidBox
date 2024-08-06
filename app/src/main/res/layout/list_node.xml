@@ -30,21 +30,21 @@
     <ImageView
         android:layout_width="@dimen/img_nodelist"
         android:layout_height="@dimen/img_nodelist"
+        android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/node_label"
-        android:layout_centerVertical="true"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/edit"
-        app:tint="@color/system1_500"
-        android:contentDescription="@string/app_name" />
+        app:tint="@color/system1_500" />
 
     <ImageView
         android:layout_width="@dimen/img_nodelist"
         android:layout_height="@dimen/img_nodelist"
+        android:layout_centerVertical="true"
         android:layout_marginStart="40dp"
         android:layout_toEndOf="@+id/node_label"
-        android:layout_centerVertical="true"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/add"
-        app:tint="@color/system1_500"
-        android:contentDescription="@string/app_name" />
+        app:tint="@color/system1_500" />
 
 </RelativeLayout>

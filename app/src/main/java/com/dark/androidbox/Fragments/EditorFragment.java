@@ -1,17 +1,13 @@
 package com.dark.androidbox.Fragments;
 
-import static com.dark.androidbox.Utilities.DarkUtilities.ShowMessage;
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -34,7 +30,6 @@ import com.dark.androidbox.builder.NodeType.VariableNode;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.google.android.material.textview.MaterialTextView;
 import com.gyso.treeview.GysoTreeView;
 import com.gyso.treeview.TreeViewEditor;
 import com.gyso.treeview.adapter.TreeViewHolder;
@@ -47,8 +42,6 @@ import com.gyso.treeview.model.NodeModel;
 import com.gyso.treeview.model.TreeModel;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EditorFragment extends Fragment implements NodeEvents, TreeViewControlListener {
 
@@ -60,7 +53,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
 
     public CodeView txtCode;
     public MaterialSwitch dragLock;
-    public LogicBuilder builder = new LogicBuilder(sampleCode());
 
     public MaterialAlertDialogBuilder dialogBuilder;
     public Editor codeEditor;
@@ -70,10 +62,9 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
     TreeLayoutManager treeLayoutManager;
     TreeModel<Codes> treeModel;
     NodeModel<Codes> rootClass;
+    NodeBuilderDialog nodeBuilderDialog;
     private NodeModel<Codes> parentToRemoveChildren = null;
     private NodeModel<Codes> targetNode;
-
-    NodeBuilderDialog nodeBuilderDialog;
 
     public EditorFragment() {
     }
@@ -105,7 +96,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
                 "    public class SonarBuilder { \n" +
                 "\n" +
                 "    }\n" +
-                "" +
                 "    public class Class2 {\n" +
                 "\n" +
                 "    }\n" +
@@ -274,140 +264,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         //return new DashLine(Color.parseColor("#F1286C"),3);
         //return new AngledLine();
     }
-    public void NodeMerge(NodeModel<Codes> target, NodeModel<Codes> released) {
-
-        LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
-        LogicBuilder releasedLogic = new LogicBuilder(released.value.data.toString());
-        LogicBuilder classBuilder = new LogicBuilder(rootClass.value.data.toString());
-
-        StringBuilder targetData = target.value.data;
-        StringBuilder releasedData = released.value.data;
-
-        int targetNodeType = target.value.type;
-        int releasedNodeType = released.value.type;
-
-        if (targetNodeType == 0 && releasedNodeType == 2)
-            AddVariableNode(target, released);
-
-//        if (releasedLogic.isClass()) {
-//
-//            String classToWrite = releasedLogic.getClasses().get(0);
-//
-//            if (targetLogic.containsClass(classToWrite)) {
-//                String codeToReplace = targetLogic.extractClass(classToWrite);
-//
-//                target.value.writeData(new StringBuilder(replace(targetData.toString(), codeToReplace, releasedData.toString())));
-//
-//                Log.e("Mission SuccessFull", target.value.data.toString());
-//
-//            } else {
-//
-//                target.value.writeData(new StringBuilder(writeClass(targetData.toString(), releasedData.toString())));
-//
-//                classToWrite = targetLogic.getClasses().get(0);
-//                Log.e("CLass To Write", classToWrite);
-//                Log.e("CLass Data", rootClass.value.data.toString());
-//
-//                if (classBuilder.containsClass(classToWrite)){
-//                    String strToReplace = classBuilder.extractClass(classToWrite);
-//                    String withReplace = target.value.data.toString();
-//
-//                    classToWrite = targetLogic.getClasses().get(0);
-//
-//                    Log.e("CLass To Write With", withReplace);
-//
-//                    if (classBuilder.containsClass(classToWrite)){
-//                        String existingCode = rootClass.value.data.toString();
-//
-//                        String modifiedClassCode = target.value.data.toString();
-//
-//                        // Step 3: Find the specific class block within the string
-//                        String regex = "(?s)(class\\s+" + classToWrite + "\\s*\\{.*?\\})";
-//                        String modifiedCode = existingCode.replaceAll(regex, modifiedClassCode);
-//
-//                        rootClass.value.writeData(new StringBuilder(modifiedCode));
-//                    }
-//                }
-//
-//                Log.e("Mission SuccessFull", target.value.data.toString());
-//            }
-//        }
-
-    }
-
-    public void AddVariableNode(NodeModel<Codes> target, NodeModel<Codes> released) {
-        LogicBuilder targetLogic = new LogicBuilder(target.value.data.toString());
-        LogicBuilder releasedLogic = new LogicBuilder(released.value.data.toString());
-        LogicBuilder classBuilder = new LogicBuilder(rootClass.value.data.toString());
-
-
-        int targetNodeType = target.value.type;
-        int releasedNodeType = released.value.type;
-
-
-        if (targetLogic.isClass()) {
-            AddCode(target.value.data.toString(), released.value.data.toString());
-        }
-
-
-    }
-
-    public static String AddCode(String codeString, String code) {
-
-        // Regular expression pattern to match the class declaration line
-        String classDeclarationPattern = "\\bpublic\\s+class\\s+\\w+\\b";
-
-        // Create a regular expression pattern object
-        Pattern pattern = Pattern.compile(classDeclarationPattern);
-        Matcher matcher = pattern.matcher(codeString);
-
-        // Find the class declaration line
-        if (matcher.find()) {
-            String classDeclarationLine = matcher.group();
-
-            // Find the index of the class declaration line
-            int classDeclarationIndex = codeString.indexOf(classDeclarationLine);
-
-            // Check if the class declaration line is found
-            if (classDeclarationIndex != -1) {
-                // Find the index of the closing curly brace
-                int closingBraceIndex = codeString.indexOf('}', classDeclarationIndex);
-
-                // Check if the closing brace is found
-                if (closingBraceIndex != -1) {
-                    // Insert the text after the closing brace
-
-                    return codeString.substring(0, closingBraceIndex) +
-                            "\n" + code + "\n" +
-                            codeString.substring(closingBraceIndex);
-                }
-            }
-        }
-        return codeString;
-    }
-
-    public String replace(String input, String codeToReplace, String replacement) {
-        if (input == null || codeToReplace == null || replacement == null) {
-            throw new IllegalArgumentException("Input, target, and replacement cannot be null");
-        }
-        return input.replace(codeToReplace, replacement);
-    }
-
-    public String writeClass(String targetData, String releasedData) {
-        String result = "";
-
-        String[] lines = targetData.split("\\r?\\n");
-        int secondLastLineIndex = lines.length - 2; // index of the second last line
-
-        if (secondLastLineIndex >= 0) {
-            lines[secondLastLineIndex] = releasedData.toString(); // new string to insert
-            result = String.join("\n", lines);
-        } else {
-            System.out.println("Error: Could not find second last line in the original string.");
-        }
-
-        return result;
-    }
 
     public void CodeToNode(String code) {
 
@@ -513,32 +369,6 @@ public class EditorFragment extends Fragment implements NodeEvents, TreeViewCont
         TreeViewHolder<Codes> targetHolder = (TreeViewHolder<Codes>) treeView.treeViewContainer.getTreeViewHolder((NodeModel) fTag);
         TreeViewHolder<Codes> releasedChildHolder = (TreeViewHolder<Codes>) view.getTag(com.gyso.treeview.R.id.item_holder);
 
-
-        if (targetHolder != null) {
-            targetHolderNode = targetHolder.getNode();
-        }
-
-        if (targetHolder != null) {
-            releasedChildHolderNode = releasedChildHolder.getNode();
-        }
-
-        if (getHit) {
-            View child = targetHolder.getView();
-
-            for (int i = 0; i < ((ViewGroup) child).getChildCount(); i++) {
-                View childView = ((ViewGroup) child).getChildAt(i);
-                if (childView instanceof MaterialTextView) {
-                    int typeInfoDataText = Integer.parseInt(((TextView) childView).getText().toString());
-
-                    if (typeInfoDataText == 2)
-                        //Node Is Not Merge
-                        ShowMessage(getContext(), new StringBuilder(releasedChildHolderNode.value.label));
-                    else
-                        //Node Is Merge
-                        NodeMerge(targetHolderNode, releasedChildHolderNode);
-                }
-            }
-        }
     }
 
     @Override
