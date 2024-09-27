@@ -1,7 +1,8 @@
 # AndroidBox - A Node-Based IDE
 
 AndroidBox is an innovative IDE that utilizes a node-based editor concept, allowing for dynamic conversion between nodes and text code. It aims to provide an enhanced coding experience by combining the best features of block-based and text-based coding methods.
-
+## See The Progress
+- **LinkedIn** : [Siddhesh Soanr](https://www.linkedin.com/in/siddhesh-sonar-7840a7260/) 
 ## Key Features
 
 - **Node-to-Text Conversion**: Convert nodes to text code at runtime.
@@ -35,21 +36,13 @@ You can view the current build and updates at [AndroidBox GitHub Actions](https:
 
 - **Custom Views**
   - **Node View**
-    - **Local Path**: `AndroidBox/nodes`
+    - **Local Path**: `AndroidBox/node`
     - **Credits**: [android-thinkmap-treeview](https://github.com/guaishouN/android-thinkmap-treeview)
   
   - **Code View**
     - **Local Path**: `AndroidBox/codeview`
-    - **Credits**: [android-thinkmap-treeview](https://github.com/guaishouN/android-thinkmap-treeview)
-
-## Contributing
-
-If you would like to contribute to the development of AndroidBox, please follow the [contribution guidelines](CONTRIBUTING.md).
-
-## License
-
-AndroidBox is licensed under the [MIT License](LICENSE).
+    - **Credits**: [Code View](https://amrdeveloper.github.io/CodeView/))
 
 ---
 
-Feel free to make any additional modifications based on your specific needs or project updates!
+Feel free to make any additional modifications based on your specific needs or project updates!, But Give me credit Thoo ;)
