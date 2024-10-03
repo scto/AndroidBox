@@ -37,7 +37,7 @@ dependencies {
 
     implementation libs.javaparser.core
 
-
+    implementation libs.janino
 
     implementation project(":node")
     implementation project(":codeview")
